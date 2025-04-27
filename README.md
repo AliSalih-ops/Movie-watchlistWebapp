@@ -24,9 +24,9 @@ A sophisticated web application for keeping track of your favorite movies, with 
 
 <!-- Add your screenshots here. For example: -->
 
-### Movie List Page
-![Movie List Page](screenshots/movie-list.png)
-*Browse your entire movie collection with quick filtering options*
+### Login Page
+![Login Page](screenshots/login.png)
+*Login and browse your watches movies*
 
 ### Movie Details Page
 ![Movie Details Page](screenshots/Screenshot2025-04-27185027.png)
