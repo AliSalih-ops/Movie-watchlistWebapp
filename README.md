@@ -1,3 +1,4 @@
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 # Movie-watchlistWebapp
 
 A sophisticated web application for keeping track of your favorite movies, with a focus on personal ratings, reviews, and rich movie information.
