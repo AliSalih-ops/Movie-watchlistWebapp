@@ -29,11 +29,11 @@ A sophisticated web application for keeping track of your favorite movies, with 
 *Browse your entire movie collection with quick filtering options*
 
 ### Movie Details Page
-![Movie Details Page](screenshots/movie-details.png)
+![Movie Details Page](screenshots/Screenshot 2025-04-27 185027.png)
 *Rich movie information including trailer, cast, ratings, and similar movie recommendations*
 
 ### Add/Edit Movie Form
-![Add/Edit Movie Form](screenshots/movie-form.png)
+![Add/Edit Movie Form](screenshots/Screenshot 2025-04-27 184840.png)
 *Intuitive form to add new movies or update existing entries*
 
 ## 🛠️ Technologies
