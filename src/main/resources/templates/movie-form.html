@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{movie.form.title}">Add/Edit Movie</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/movie-form.css}">
+</head>
+<body>
+    <div class="page-container">
+        <div class="language-selector">
+            <a href="?lang=en">🇬🇧 English</a><a href="?lang=tr">🇹🇷 Türkçe</a>
+        </div>
+        
+        <h1 class="page-title" th:text="#{movie.form.title}">Add Your Movie Masterpiece</h1>
+        
+        <div class="form-container">
+            <div class="form-header">
+                <h2 th:text="#{movie.form.title}">Movie Details</h2>
+            </div>
+            
+            <div class="form-body">
+                <form th:action="@{/movies/save}" th:object="${movie}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" th:field="*{id}" />
+                    <input type="hidden" th:field="*{imageName}" />
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label th:text="#{movie.title}">Movie Title</label>
+                                <input type="text" th:field="*{title}" class="form-control" placeholder="Enter the movie title" />
+                                <span class="error-message" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label th:text="#{movie.releaseDate}">Release Date</label>
+                                <input type="date" th:field="*{releaseDate}" th:value="${#temporals.format(movie.releaseDate, 'yyyy-MM-dd')}" class="form-control" />
+                                <span class="error-message" th:if="${#fields.hasErrors('releaseDate')}" th:errors="*{releaseDate}"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label th:text="#{movie.rating}">Your Rating</label>
+                                <input type="hidden" th:field="*{rating}" id="ratingValue" />
+                                
+                                <div class="star-rating-container">
+                                    <div class="star-rating" id="starRating">
+                                        <div class="star-item" data-value="1"><i class="fas fa-star"></i></div>
+                                        <div class="star-item" data-value="2"><i class="fas fa-star"></i></div>
+                                        <div class="star-item" data-value="3"><i class="fas fa-star"></i></div>
+                                        <div class="star-item" data-value="4"><i class="fas fa-star"></i></div>
+                                        <div class="star-item" data-value="5"><i class="fas fa-star"></i></div>
+                                        <div class="star-item" data-value="6"><i class="fas fa-star"></i></div>
+                                        <div class="star-item" data-value="7"><i class="fas fa-star"></i></div>
+                                        <div class="star-item" data-value="8"><i class="fas fa-star"></i></div>
+                                        <div class="star-item" data-value="9"><i class="fas fa-star"></i></div>
+                                        <div class="star-item" data-value="10"><i class="fas fa-star"></i></div>
+                                        <span class="rating-value" id="ratingDisplay">5</span>
+                                    </div>
+                                </div>
+                                
+                                <span class="error-message" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label th:text="#{movie.genres}">Movie Genres</label>
+                                <select multiple th:field="*{genres}" class="form-control genre-select">
+                                    <option value="Action">Action</option>
+                                    <option value="Adventure">Adventure</option>
+                                    <option value="Animation">Animation</option>
+                                    <option value="Biography">Biography</option>
+                                    <option value="Comedy">Comedy</option>
+                                    <option value="Crime">Crime</option>
+                                    <option value="Documentary">Documentary</option>
+                                    <option value="Drama">Drama</option>
+                                    <option value="Family">Family</option>
+                                    <option value="Fantasy">Fantasy</option>
+                                    <option value="Horror">Horror</option>
+                                    <option value="Musical">Musical</option>
+                                    <option value="Mystery">Mystery</option>
+                                    <option value="Romance">Romance</option>
+                                    <option value="Sci-Fi">Sci-Fi</option>
+                                    <option value="Thriller">Thriller</option>
+                                    <option value="War">War</option>
+                                    <option value="Western">Western</option>
+                                </select>
+                                <span class="error-message" th:if="${#fields.hasErrors('genres')}" th:errors="*{genres}"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label th:text="#{movie.image}">Movie Poster</label>
+                                <div class="image-preview-container">
+                                    <div class="image-preview">
+                                        <img th:if="${movie.imageName != null && movie.imageName != ''}" th:src="${movie.imageName}" alt="Movie Poster" id="preview-image">
+                                        <i th:if="${movie.imageName == null || movie.imageName == ''}" class="fas fa-film placeholder" id="preview-placeholder"></i>
+                                    </div>
+                                    
+                                    <div class="image-controls">
+                                        <div class="file-input-container">
+                                            <label for="imageFile" class="custom-file-input">
+                                                <i class="fas fa-upload"></i>
+                                                <span>Choose Poster</span>
+                                            </label>
+                                            <input type="file" id="imageFile" name="imageFile" accept="image/*" onchange="previewImage(this)"/>
+                                        </div>
+                                        <span class="file-name" id="file-name">No file chosen</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label th:text="#{movie.review}">Your Review</label>
+                                <textarea th:field="*{description}" class="form-control" placeholder="Share your thoughts about this movie..."></textarea>
+                                <span class="error-message" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a th:href="@{/movies}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            <span th:text="#{button.back}">Back to Movies</span>
+                        </a>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            <span th:text="#{button.save}">Save Movie</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Function to preview the image before upload
+        function previewImage(input) {
+            const previewContainer = document.querySelector('.image-preview');
+            const previewPlaceholder = document.getElementById('preview-placeholder');
+            const fileName = document.getElementById('file-name');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // Check if image already exists
+                    let previewImage = document.getElementById('preview-image');
+                    
+                    if (!previewImage) {
+                        // Create new image if it doesn't exist
+                        previewImage = document.createElement('img');
+                        previewImage.id = 'preview-image';
+                        previewImage.alt = 'Movie Poster';
+                        
+                        // Clear container and add the image
+                        previewContainer.innerHTML = '';
+                        previewContainer.appendChild(previewImage);
+                    }
+                    
+                    // Set the image source
+                    previewImage.src = e.target.result;
+                    
+                    // Hide placeholder if it exists
+                    if (previewPlaceholder) {
+                        previewPlaceholder.style.display = 'none';
+                    }
+                    
+                    // Update file name display
+                    fileName.textContent = input.files[0].name;
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                // No file selected, show placeholder
+                const previewImage = document.getElementById('preview-image');
+                if (previewImage) {
+                    previewImage.remove();
+                }
+                
+                if (previewPlaceholder && previewPlaceholder.style.display === 'none') {
+                    previewPlaceholder.style.display = 'block';
+                }
+                
+                fileName.textContent = 'No file chosen';
+            }
+        }
+        
+        // Star Rating System
+        document.addEventListener('DOMContentLoaded', function() {
+            const ratingInput = document.getElementById('ratingValue');
+            const ratingDisplay = document.getElementById('ratingDisplay');
+            const stars = document.querySelectorAll('.star-item');
+            
+            // Initialize with current value or default to 1
+            const initialRating = ratingInput.value || 1;
+            ratingDisplay.textContent = initialRating;
+            updateStars(initialRating);
+            
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    ratingInput.value = value;
+                    ratingDisplay.textContent = value;
+                    updateStars(value);
+                });
+                
+                // Add hover effect
+                star.addEventListener('mouseenter', function() {
+                    const value = this.getAttribute('data-value');
+                    highlightStars(value);
+                });
+            });
+            
+            const starRating = document.getElementById('starRating');
+            
+            // Reset on mouseleave
+            starRating.addEventListener('mouseleave', function() {
+                updateStars(ratingInput.value || 1);
+            });
+            
+            function updateStars(value) {
+                const valueInt = parseInt(value);
+                stars.forEach(star => {
+                    const starValue = parseInt(star.getAttribute('data-value'));
+                    if (starValue <= valueInt) {
+                        star.classList.add('selected');
+                    } else {
+                        star.classList.remove('selected');
+                    }
+                });
+            }
+            
+            function highlightStars(value) {
+                const valueInt = parseInt(value);
+                stars.forEach(star => {
+                    const starValue = parseInt(star.getAttribute('data-value'));
+                    if (starValue <= valueInt) {
+                        star.classList.add('selected');
+                    } else {
+                        star.classList.remove('selected');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{page.watchlist.title}">Movie Watchlist</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6d28d9;
+            --primary-light: #8b5cf6;
+            --primary-dark: #5b21b6;
+            --accent-color: #f59e0b;
+            --accent-dark: #d97706;
+            --text-color: #1f2937;
+            --text-light: #4b5563;
+            --text-white: #f9fafb;
+            --bg-dark: #111827;
+            --bg-light: #f3f4f6;
+            --bg-white: #ffffff;
+            --danger-color: #ef4444;
+            --success-color: #10b981;
+            --star-color: #fbbf24;
+            --star-inactive: #d1d5db;
+            --border-radius: 10px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            min-height: 100vh;
+            padding-top: 80px; /* Space for the fixed header */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header and Navigation */
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        /* User Corner */
+        .user-corner {
+            display: flex;
+            align-items: center;
+            position: relative;
+            margin-right: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px 15px;
+            border-radius: 30px;
+            transition: var(--transition);
+            background-color: var(--bg-light);
+        }
+
+        .user-profile:hover {
+            background-color: var(--primary-light);
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-dark), var(--primary-light));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 200px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            display: none;
+            z-index: 1001;
+            overflow: hidden;
+            animation: dropdownFadeIn 0.3s ease forwards;
+        }
+
+        @keyframes dropdownFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+		.user-dropdown.active {
+		    display: block;
+		}
+
+        .dropdown-item {
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            width: 100%;
+            text-align: left;
+            background: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--bg-light);
+        }
+
+        .dropdown-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .logout-item {
+            color: var(--danger-color);
+        }
+        
+        .logout-item:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Language Selector */
+        .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .language-selector a {
+            text-decoration: none;
+            color: var(--text-color);
+            padding: 8px 15px;
+            border-radius: 30px;
+            transition: var(--transition);
+            font-weight: 500;
+            background-color: var(--bg-light);
+        }
+
+        .language-selector a:hover {
+            background-color: var(--primary-light);
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Main Content */
+        .content-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow-lg);
+            margin-top: 20px;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        h1 i {
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+
+        .add-button {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(90deg, var(--accent-color), var(--accent-dark));
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: var(--transition);
+            box-shadow: var(--shadow-md);
+        }
+
+        .add-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .add-button i {
+            margin-right: 8px;
+        }
+
+        /* Movie Grid */
+        .no-movies {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: var(--bg-white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .movie-card {
+            background-color: var(--bg-white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .movie-poster {
+            height: 240px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .movie-poster i {
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .movie-card:hover .movie-poster img {
+            transform: scale(1.05);
+        }
+
+        .movie-rating {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .movie-rating i {
+            color: var(--star-color);
+            margin-right: 5px;
+            font-size: 1rem;
+        }
+
+        .movie-info {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movie-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .movie-release-date {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .movie-release-date i {
+            margin-right: 6px;
+            color: var(--primary-light);
+        }
+
+        .movie-genres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .genre-tag {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .genre-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .movie-description {
+            color: var(--text-color);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1; /* Show only 1 line */
+            -webkit-box-orient: vertical;
+            white-space: nowrap; /* Ensures single line */
+        }
+
+        .movie-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid var(--bg-light);
+        }
+
+        .movie-action-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .movie-action-btn i {
+            margin-right: 6px;
+        }
+
+        .view-btn {
+            color: var(--primary-color);
+            background-color: rgba(109, 40, 217, 0.1);
+        }
+
+        .view-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .edit-btn {
+            color: var(--success-color);
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+
+        .edit-btn:hover {
+            background-color: var(--success-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .delete-btn {
+            color: var(--danger-color);
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .delete-btn:hover {
+            background-color: var(--danger-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            }
+            
+            .navbar {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .nav-right {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .user-info {
+                display: none;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .add-button {
+                margin-top: 15px;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .movie-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .movie-card {
+                max-width: 320px;
+                margin: 0 auto;
+            }
+            
+            .content-container {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Navigation -->
+    <header>
+        <div class="navbar">
+            <a href="/movies" class="logo">
+                <i class="fas fa-film"></i>
+                <span th:text="#{page.watchlist.title}">Movie Watchlist</span>
+            </a>
+            <div class="nav-right">
+                <!-- User Corner - With model information -->
+				<!-- User Corner - With model information -->
+				<div class="user-corner" id="userCorner">
+				    <div class="user-profile" id="userProfileButton">
+				        <!-- First letter of the username -->
+				        <div class="user-avatar" 
+				             th:with="username=${session.SPRING_SECURITY_CONTEXT?.authentication?.name}"
+				             th:text="${username != null ? #strings.substring(username, 0, 1).toUpperCase() : 'U'}">U</div>
+				        <div class="user-info">
+				            <!-- Display username -->
+				            <div class="user-name" 
+				                 th:with="username=${session.SPRING_SECURITY_CONTEXT?.authentication?.name}"
+				                 th:text="${username != null ? username : 'User'}">User</div>
+				        </div>
+				    </div>
+				    <div class="user-dropdown" id="userDropdown">
+				        <!-- Only logout option as requested -->
+				        <form th:action="@{/logout}" method="post" style="margin: 0; padding: 0;">
+				            <button type="submit" class="dropdown-item logout-item">
+				                <i class="fas fa-sign-out-alt"></i>
+				                <span>Log Out</span>
+				            </button>
+				        </form>
+				    </div>
+				</div>
+                
+                <!-- Language Selector -->
+                <div class="language-selector">
+                    <a href="?lang=en">🇬🇧 English</a>
+                    <a href="?lang=tr">🇹🇷 Türkçe</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="content-container">
+            <!-- Page Header with Add Button -->
+            <div class="page-header">
+                <h1>
+                    <i class="fas fa-ticket-alt"></i>
+                    <span th:text="#{page.watchlist.heading}">My Movie Watchlist</span>
+                </h1>
+                <a th:href="@{/movies/new}" class="add-button">
+                    <i class="fas fa-plus"></i>
+                    <span th:text="#{button.save}">Add New Movie</span>
+                </a>
+            </div>
+
+            <!-- No Movies Message -->
+            <div th:if="${#lists.isEmpty(movies)}" class="no-movies">
+                <i class="fas fa-film" style="font-size: 3rem; margin-bottom: 15px; color: var(--primary-color);"></i>
+                <p th:text="#{page.watchlist.empty}">No movies in your watchlist yet. Add your first movie!</p>
+            </div>
+
+            <!-- Movie Grid -->
+            <div th:if="${not #lists.isEmpty(movies)}" class="movie-grid">
+                <!-- Movie Cards -->
+                <div th:each="movie : ${movies}" class="movie-card">
+                    <div class="movie-poster">
+                        <!-- Show image if available, fallback to icon if no image -->
+                        <th:block th:if="${movie.imageName != null and movie.imageName != ''}">
+                            <img th:src="${movie.imageName}" alt="Movie Poster">
+                        </th:block>
+                        <th:block th:if="${movie.imageName == null or movie.imageName == ''}">
+                            <i class="fas fa-film"></i>
+                        </th:block>
+                        <div class="movie-rating">
+                            <i class="fas fa-star"></i>
+                            <span th:text="${movie.rating}">8.5</span>
+                        </div>
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title" th:text="${movie.title}">Movie Title</h3>
+                        <div class="movie-release-date">
+                            <i class="far fa-calendar-alt"></i>
+                            <span th:text="${#temporals.format(movie.releaseDate, 'dd MMMM yyyy')}">01 January 2023</span>
+                        </div>
+                        <div class="movie-genres">
+                            <span th:each="genre : ${movie.genres}" class="genre-tag" th:text="${genre}">Genre</span>
+                        </div>
+                        <!-- Truncated description (1 line only) -->
+                        <p class="movie-description" th:title="${movie.description}" th:text="${#strings.length(movie.description) > 50 ? #strings.substring(movie.description, 0, 50) + '...' : movie.description}">Movie description here...</p>
+                        <div class="movie-actions">
+                            <a th:href="@{/movies/{id}(id=${movie.id})}" class="movie-action-btn view-btn">
+                                <i class="fas fa-eye"></i>
+                                <span th:text="#{button.view}">View</span>
+                            </a>
+                            <a th:href="@{/movies/edit/{id}(id=${movie.id})}" class="movie-action-btn edit-btn">
+                                <i class="fas fa-edit"></i>
+                                <span th:text="#{button.edit}">Edit</span>
+                            </a>
+                            <a th:href="@{/movies/delete/{id}(id=${movie.id})}" 
+                               onclick="return confirm('Are you sure?')" 
+                               class="movie-action-btn delete-btn">
+                                <i class="fas fa-trash-alt"></i>
+                                <span th:text="#{button.delete}">Delete</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	<script>
+	    // Toggle dropdown on click instead of hover
+	    document.addEventListener('DOMContentLoaded', function() {
+	        const userProfileButton = document.getElementById('userProfileButton');
+	        const userDropdown = document.getElementById('userDropdown');
+	        const userCorner = document.getElementById('userCorner');
+	        
+	        // Toggle dropdown when user profile is clicked
+	        userProfileButton.addEventListener('click', function(e) {
+	            e.stopPropagation();
+	            userDropdown.classList.toggle('active');
+	        });
+	        
+	        // Close dropdown when clicking elsewhere
+	        document.addEventListener('click', function(e) {
+	            if (!userCorner.contains(e.target)) {
+	                userDropdown.classList.remove('active');
+	            }
+	        });
+	    });
+	</script>
+</body>
+</html>

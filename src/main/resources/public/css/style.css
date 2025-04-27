@@ -1,0 +1,28 @@
+html {
+    background-color: #e9eee3;
+    font-family: "Source Sans 3", Arial, sans-serif;
+    font-size: 18px;
+    margin-left: 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #4c9599;
+}
+
+a {
+    color: #257bb5;
+}
+
+table, td {
+    border-collapse: collapse;
+    border: 0px;
+    padding: 5px;
+}
+
+.bordered td {
+    border: 1px solid #000000;
+}
+
+.red {
+    color: #ff0000;
+}
