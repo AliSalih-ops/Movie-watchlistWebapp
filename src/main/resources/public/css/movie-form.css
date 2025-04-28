@@ -21,6 +21,10 @@
     --transition: all 0.3s ease;
 }
 
+/* Ensure Font Awesome is properly loaded */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+@import url('https://use.fontawesome.com/releases/v6.4.0/css/all.min.css');
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -192,7 +196,7 @@ select[multiple].form-control option:checked {
     display: block;
 }
 
-/* Star Rating System */
+/* Star Rating System - Enhanced for Mac compatibility */
 .star-rating-container {
     margin-top: 10px;
 }
@@ -203,29 +207,45 @@ select[multiple].form-control option:checked {
     gap: 3px;
 }
 
+/* Fixed star styles for cross-browser compatibility */
 .star-item {
     cursor: pointer;
     font-size: 28px;
     color: var(--star-inactive);
     transition: var(--transition);
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
 }
 
-.star-item i {
+.star-item i.fas,
+.star-item i.fas.fa-star {
+    display: inline-block !important;
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    text-rendering: auto !important;
+    line-height: 1 !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
     transition: transform 0.2s ease, color 0.2s ease;
 }
 
-.star-item.selected i {
-    color: var(--star-color);
+.star-item.selected i.fas,
+.star-item.selected i.fas.fa-star {
+    color: var(--star-color) !important;
     transform: scale(1.2);
 }
 
-.star-item:hover i {
-    color: var(--star-color);
+.star-item:hover i.fas,
+.star-item:hover i.fas.fa-star {
+    color: var(--star-color) !important;
     transform: scale(1.2);
 }
-
-/* Remove the sibling selector that was causing issues with 1-10 order */
 
 .rating-value {
     margin-left: 15px;
@@ -275,6 +295,14 @@ select[multiple].form-control option:checked {
     opacity: 0.5;
 }
 
+/* Fix for placeholder icon */
+.image-preview .placeholder.fas,
+.image-preview .placeholder.fas.fa-film {
+    display: inline-block !important;
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+}
+
 .image-controls {
     display: flex;
     align-items: center;
@@ -307,6 +335,14 @@ select[multiple].form-control option:checked {
 
 .custom-file-input i {
     margin-right: 10px;
+}
+
+/* Fix for upload icon */
+.custom-file-input i.fas,
+.custom-file-input i.fas.fa-upload {
+    display: inline-block !important;
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
 }
 
 input[type="file"] {
@@ -376,6 +412,15 @@ input[type="file"] {
 
 .btn i {
     margin-right: 8px;
+}
+
+/* Fix for button icons */
+.btn i.fas,
+.btn i.fas.fa-arrow-left,
+.btn i.fas.fa-save {
+    display: inline-block !important;
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
 }
 
 /* Animation */

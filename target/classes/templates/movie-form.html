@@ -4,8 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{movie.form.title}">Add/Edit Movie</title>
+    <!-- Double link for Font Awesome to ensure it loads - primary and fallback -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/movie-form.css}">
+    <!-- Inline CSS fix for star rating - critical for Mac browsers -->
+    <style>
+        /* Fix for star display on Mac browsers */
+        .star-item {
+            cursor: pointer;
+            font-size: 28px;
+            color: #d1d5db;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+        }
+        
+        .star-item i.fas.fa-star {
+            display: inline-block !important;
+            font-family: "Font Awesome 6 Free" !important;
+            font-weight: 900 !important;
+            font-style: normal !important;
+            font-variant: normal !important;
+            text-rendering: auto !important;
+            line-height: 1 !important;
+            -webkit-font-smoothing: antialiased !important;
+            -moz-osx-font-smoothing: grayscale !important;
+        }
+        
+        .star-item.selected i.fas.fa-star {
+            color: #fbbf24 !important;
+            transform: scale(1.2);
+        }
+        
+        .star-item:hover i.fas.fa-star {
+            color: #fbbf24 !important;
+            transform: scale(1.2);
+        }
+    </style>
 </head>
 <body>
     <div class="page-container">
@@ -134,7 +174,40 @@
         </div>
     </div>
     
+    <!-- Font Awesome Fallback Script -->
     <script>
+        // Check if Font Awesome icons are loaded properly
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const starIcon = document.querySelector('.fas.fa-star');
+                if (starIcon && window.getComputedStyle(starIcon).fontFamily.indexOf('Font Awesome') === -1) {
+                    console.log('Font Awesome not loaded correctly, applying fallback...');
+                    
+                    // Try another CDN
+                    const newLink = document.createElement('link');
+                    newLink.rel = 'stylesheet';
+                    newLink.href = 'https://use.fontawesome.com/releases/v6.4.0/css/all.min.css';
+                    document.head.appendChild(newLink);
+                    
+                    // If all else fails, use Unicode stars
+                    setTimeout(function() {
+                        const checkAgain = document.querySelector('.fas.fa-star');
+                        if (checkAgain && window.getComputedStyle(checkAgain).fontFamily.indexOf('Font Awesome') === -1) {
+                            document.querySelectorAll('.star-item').forEach(function(star) {
+                                star.innerHTML = '★';
+                                star.style.fontSize = '24px';
+                            });
+                            
+                            // Adjust styling for Unicode stars
+                            document.querySelectorAll('.star-item.selected').forEach(function(selected) {
+                                selected.style.color = '#fbbf24';
+                            });
+                        }
+                    }, 500);
+                }
+            }, 300);
+        });
+
         // Function to preview the image before upload
         function previewImage(input) {
             const previewContainer = document.querySelector('.image-preview');
@@ -187,7 +260,7 @@
             }
         }
         
-        // Star Rating System
+        // Star Rating System - enhanced for cross-browser compatibility
         document.addEventListener('DOMContentLoaded', function() {
             const ratingInput = document.getElementById('ratingValue');
             const ratingDisplay = document.getElementById('ratingDisplay');
